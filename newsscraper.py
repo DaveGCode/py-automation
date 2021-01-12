@@ -11,6 +11,11 @@ def main():
     credpath = str(Path.home()) + '/credentials.txt'
     creds = configparser.ConfigParser()
     creds.read(credpath)
+    # check if provided creds exist blank
+    for entry in creds['reddit']:
+        if creds['reddit'][entry].isspace():
+            sys.exit('ERROR: No credentials found')
+
     with praw.Reddit(client_id=creds['reddit']['client_id'], client_secret=creds['reddit']['client_secret'],
                      user_agent=creds['reddit']['user_agent'], username=creds['reddit']['username'],
                      password=creds['reddit']['password']) as rclient:
