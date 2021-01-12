@@ -1,13 +1,16 @@
 # Autobackup.py - zip a files seen in $HOME/Documents and upload to dropbox
 # https://dropbox-sdk-python.readthedocs.io/en/master/moduledoc.html
 
-import os, sys, shutil, dropbox
+import os, sys, shutil, dropbox, configparser
 from pathlib import Path
 from datetime import datetime
 from dropbox.files import WriteMode
 from dropbox.exceptions import ApiError, AuthError
 
-TOKEN = ''
+credpath = str(Path.home()) + '/credentials.txt'
+creds = configparser.ConfigParser()
+creds.read(credpath)
+TOKEN = creds['dropbox']['token']
 
 
 def backup(db, ff, ft):
@@ -44,8 +47,8 @@ def main():
     filename, file_from = zipfiles()
     file_to = '/DGAutoBackup/' + filename
     print('Zip to upload: ' + filename)
-    print('DropBox upload location: ' + file_to)
-    print("Initiating DropBox Client..")
+    print('Dropbox upload location: ' + file_to)
+    print("Initiating Dropbox Client..")
     with dropbox.Dropbox(TOKEN, scope=['files.content.read', 'files.metadata.read', 'files.content.write']) as dbclient:
         try:
             # Auth check
