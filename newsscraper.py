@@ -1,7 +1,7 @@
 '''
 Reddit News Scraper -  get top X articles from various news subreddits
 '''
-import praw, sys
+import praw, sys, pandas
 
 from pathlib import Path
 import configparser
@@ -26,9 +26,23 @@ def main():
             print('failed')
             sys.exit()
     news_subreddits = rclient.subreddit('news+worldnews')
+    thread_info = { "title":[],
+                "score":[],
+                "id":[], "url":[],
+                "comms_num": [],
+                "created": [],
+                "body":[]}
     topofsub = news_subreddits.top(limit=10)
-    for sub in topofsub:
-        print('Title: ' + sub.title, '\nSubreddit Name: ' + sub.id)
+    for thread in topofsub:
+        thread_info['title'].append(thread.title)
+        thread_info['score'].append(thread.score)
+        thread_info['id'].append(thread.id)
+        thread_info['url'].append(thread.url)
+        thread_info['comms_num'].append(thread.num_comments)
+        thread_info['created'].append(thread.created)
+        thread_info['body'].append(thread.selftext)
+    thread_data = pandas.DataFrame(thread_info)
+    print(thread_data)
 
 
 if __name__ == '__main__':
