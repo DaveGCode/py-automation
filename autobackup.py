@@ -25,15 +25,7 @@ def backup(db, ff, ft):
 
 
 def zipfiles():
-    path = str(Path.home()) + '/Documents'
-    folders, files = [], []
-    # Confirm folders/files to be zipped
-    for entry in os.scandir(path):
-        if entry.is_dir():
-            folders.append(entry)
-        elif entry.is_file():
-            files.append(entry)
-    # print("Folders: - {}".format(folders)) // AutoBackup-Documents-2021-01-11.zip
+    path = str(Path.home()) + '/Desktop/test'
     filename = 'AutoBackup-Documents-' + str(datetime.date(datetime.now())) + '.zip'
     # return zip folder
     return filename, shutil.make_archive(filename, 'zip', path)
@@ -44,10 +36,10 @@ def main():
         sys.exit('ERROR: DropBox Access Token not provided')
 
     print("Confirming files to upload..")
-    filename, file_from = zipfiles()
-    file_to = '/DGAutoBackup/' + filename
+    filename, zippedfiles = zipfiles()
+    uploadlocation = '/DGAutoBackup/' + filename
     print('Zip to upload: ' + filename)
-    print('Dropbox upload location: ' + file_to)
+    print('Dropbox upload location: ' + uploadlocation)
     print("Initiating Dropbox Client..")
     with dropbox.Dropbox(TOKEN, scope=['files.content.read', 'files.metadata.read', 'files.content.write']) as dbclient:
         try:
@@ -56,8 +48,8 @@ def main():
         except AuthError:
             sys.exit('ERROR: Bad Access Token provided')
 
-    backup(dbclient, file_from, file_to)
-    print('Upload Successful: ' + 'https://www.dropbox.com/home' + file_to)
+    backup(dbclient, zippedfiles, uploadlocation)
+    print('Upload Successful: ' + 'https://www.dropbox.com/home' + uploadlocation)
 
 
 if __name__ == '__main__':
