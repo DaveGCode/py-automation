@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Reddit News Scraper -  get top X articles from various news subreddits
+Reddit News Scraper -  get top X articles from various news subreddits for past day
 '''
 
 import praw, sys, pandas
@@ -9,13 +9,13 @@ from pathlib import Path
 import configparser
 
 
-def get_credentials():
+def get_credentials(service):
     credpath = str(Path.home()) + '/credentials.txt'
     creds = configparser.ConfigParser()
     creds.read(credpath)
     # check if creds are provided / are not blank
-    for entry in creds['reddit']:
-        if creds['reddit'][entry].isspace():
+    for entry in creds[service]:
+        if creds[service][entry].isspace():
             sys.exit('ERROR: No credentials found')
     return creds
 
@@ -55,7 +55,7 @@ def get_news(rclient):
 
 
 def main():
-    creds = get_credentials()
+    creds = get_credentials('reddit')
     rclient = reddit_client_setup(creds)
     news = get_news(rclient)
     print(news)
