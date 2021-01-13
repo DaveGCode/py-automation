@@ -25,13 +25,14 @@ def main():
 
     # todo get slug key from coin info
     coins = {}
+    # todo display current coin price
 
     startdate = str(datetime.today())
-    enddate = str(datetime.today() - timedelta(days=1))
+    enddate = str(datetime.today() - timedelta(days=7))
     for coin in coins:
         page = requests.get(
             f'https://coinmarketcap.com/currencies/{coins[coin]}/historical-data/?start={startdate}&end={enddate}')
-
+    # todo request historical data for last 7 days
 
 if __name__ == '__main__':
     main()
