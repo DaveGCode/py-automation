@@ -51,8 +51,7 @@ def reddit_client_setup(creds):
             # try auth
             rclient.user.me()
         except praw.exceptions.APIException as err:
-            print(err)
-            sys.exit()
+            sys.exit(err)
     return rclient
 
 
@@ -74,6 +73,7 @@ def get_news(rclient):
         thread_info['created'].append(thread.created)
         thread_info['body'].append(thread.selftext)
     thread_data = pandas.DataFrame(thread_info)
+    # todo cleanup data to be sent
     return thread_data.to_json()
 
 
