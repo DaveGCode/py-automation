@@ -80,7 +80,6 @@ def get_news(rclient):
 def main():
     creds = get_credentials('reddit')
     slack_url = get_credentials('slack')
-    # slack_url = 'https://hooks.slack.com/workflows/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'
     rclient = reddit_client_setup(creds)
     news = get_news(rclient)
     post_to_slack(news, slack_url)
