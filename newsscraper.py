@@ -34,6 +34,8 @@ def get_credentials(service):
     creds = configparser.ConfigParser()
     creds.read(credpath)
     if service == 'slack':
+        if creds[service]['webhook_url'].isspace():
+            sys.exit('ERROR: No url found')
         url = creds[service]['webhook_url']
         return url
     # check if creds are provided / are not blank
