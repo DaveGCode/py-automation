@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 # Autobackup.py - zip a files seen in $HOME/Documents and upload to dropbox
 # https://dropbox-sdk-python.readthedocs.io/en/master/moduledoc.html
-
-import sys, shutil, dropbox, configparser
-from pathlib import Path
+import argparse
+import configparser
+import dropbox
+import shutil
+import sys
 from datetime import datetime
-from dropbox.files import WriteMode
+from pathlib import Path
+
 from dropbox.exceptions import ApiError, AuthError
+from dropbox.files import WriteMode
 
 
 def get_credentials(service):
@@ -31,20 +35,24 @@ def backup(db, ff, ft):
             sys.exit()
 
 
-def zipfiles():
-    path = str(Path.home()) + '/Desktop/test'
-    filename = 'AutoBackup-Documents-' + str(datetime.date(datetime.now())) + '.zip'
+def zip_files(file_path):
+    if len(file_path) == 0 or not isinstance(file_path, str):
+        sys.exit('Invalid path provided')
+    dir_name = Path(file_path).stem
+    filename = 'AutoBackup-' + dir_name + '-' + str(datetime.date(datetime.now())) + '.zip'
     # return zip folder
-    return filename, shutil.make_archive(filename, 'zip', path)
+    return filename, shutil.make_archive(filename, 'zip', file_path)
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--path', required=True, help='directory path for backup')
+    args = parser.parse_args()
+    path = args.path
     db_token = get_credentials('dropbox')
-    if len(db_token) == 0:
-        sys.exit('ERROR: DropBox Access Token not provided')
 
     print("Confirming files to upload..")
-    filename, zippedfiles = zipfiles()
+    filename, zippedfiles = zip_files(path)
     uploadlocation = '/DGAutoBackup/' + filename
     print('Zip to upload: ' + filename)
     print('Dropbox upload location: ' + uploadlocation)
